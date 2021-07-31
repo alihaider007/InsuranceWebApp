@@ -1,0 +1,130 @@
+﻿@page "/screen2"
+
+@inject NavigationManager NavManager
+@inject StateContainer StateContainer
+@implements IDisposable
+
+@using InsuranceWebApp.Data
+@using Blazored.FluentValidation
+
+@if (payload == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>Insurance Detail - Final Step</h3>
+    <hr />
+    <div class="container">
+        <EditForm Model="payload">
+            <FluentValidationValidator />
+            <div class="form-group row">
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.Occupation), typeof(InsuranceDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.Occupation), typeof(InsuranceDetail))>
+                    <InputSelect class="form-control" @bind-Value="payload.Occupation">
+                        <option value="">--Select Option--</option>
+                        @{
+                                foreach (var item in Helpers.GetKeyValuesAsListFromEnum(typeof(Constants.Occupation)).OrderBy(x => x.Key))
+                                {
+                                <option value="@item.Key">@item.Value</option>
+                                }
+                        }
+                    </InputSelect>
+                </div>
+                <div class="col-6"></div>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.SumInsured), typeof(InsuranceDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.SumInsured), typeof(InsuranceDetail))>
+                    <InputNumber class="form-control" @bind-Value="payload.SumInsured" />
+                </div>
+                <div class="col-6"></div>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.MonthlyExpense), typeof(InsuranceDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.MonthlyExpense), typeof(InsuranceDetail))>
+                    <InputNumber class="form-control" @bind-Value="payload.MonthlyExpense" />
+                </div>
+                <div class="col-6"></div>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.State), typeof(InsuranceDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.State), typeof(InsuranceDetail))>
+                    <InputSelect class="form-control" @bind-Value="payload.State">
+                        <option value="">--Select Option--</option>
+                        @{
+                                foreach (var item in Helpers.GetKeyValuesAsListFromEnum(typeof(Constants.State)).OrderBy(x => x.Key))
+                                {
+                                <option value="@item.Key">@item.Value</option>
+                                }
+                        }
+                    </InputSelect>
+                </div>
+                <div class="col-6"></div>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.PostCode), typeof(InsuranceDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.PostCode), typeof(InsuranceDetail))>
+                    <InputNumber class="form-control" @bind-Value="payload.PostCode" />
+                </div>
+                <div class="col-6"></div>
+            </div>
+            <div class="form-group row">
+                <div class="col-1">
+                    <button class="btn btn-primary mb-2" @onclick="BackToScreen1" type="button" @onclick:stopPropagation="true">Previous</button>
+                    <button class="btn btn-primary mb-2" @onclick="Calculate" type="button" @onclick:stopPropagation="true">Calculate</button>
+                </div>
+                <div class="col-10"></div>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.TotalValue), typeof(InsuranceDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.TotalValue), typeof(InsuranceDetail))>
+                    <InputNumber class="form-control" @bind-Value="payload.TotalValue" readonly />
+                </div>
+                <div class="col-6"></div>
+            </div>
+        </EditForm>
+    </div>
+}
+
+@code {
+
+    private InsuranceDetail payload;
+
+    protected async override Task OnInitializedAsync()
+    {
+        StateContainer.OnChange += StateHasChanged;
+
+        if (StateContainer.insuranceDetail != null)
+        {
+            payload = StateContainer.insuranceDetail;
+        }
+        else
+        {
+            payload = new InsuranceDetail()
+            {
+                Occupation = string.Empty,
+                State = string.Empty
+            };
+        }
+    }
+
+    private async void BackToScreen1()
+    {
+        StateContainer.SetProperty(payload);
+        NavManager.NavigateTo($"screen1/");
+    }
+
+    private void Calculate()
+    {
+        payload.TotalValue = (payload.SumInsured * 1) / (100 * 12 * payload.Age);
+        StateContainer.SetProperty(payload);
+        this.StateHasChanged();
+        return;
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+}

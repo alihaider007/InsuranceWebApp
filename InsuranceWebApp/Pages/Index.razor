@@ -1,0 +1,18 @@
+﻿@page "/"
+
+@inject NavigationManager NavManager
+
+<h1>Insurance Calculator</h1>
+
+Welcome to your new app.
+
+<hr />
+<button class="btn btn-primary" @onclick="GoToView">New Calculation</button>
+
+@code {
+
+    private void GoToView()
+    {
+        NavManager.NavigateTo($"screen1/");
+    }
+}

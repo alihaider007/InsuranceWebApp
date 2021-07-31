@@ -1,0 +1,94 @@
+﻿@page "/screen1"
+
+@inject NavigationManager NavManager
+@inject StateContainer StateContainer
+@implements IDisposable
+
+@using InsuranceWebApp.Data
+@using Blazored.FluentValidation
+
+@if (payload == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>Insurance Detail - Step 1</h3>
+    <hr />
+    <div class="container">
+        <EditForm Model="payload" OnValidSubmit="SubmitValidFormAsync">
+            <FluentValidationValidator />
+            <div class="form-group row">
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.Name), typeof(InsuranceDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.Name), typeof(InsuranceDetail))>
+                    <InputText class="form-control" @bind-Value="payload.Name" />
+                    <ValidationMessage For="@(() => payload.Name)" />
+                </div>
+                <div class="col-6"></div>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.Age), typeof(InsuranceDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.Age), typeof(InsuranceDetail))>
+                    <InputNumber class="form-control" @bind-Value="payload.Age" />
+                    <ValidationMessage For="@(() => payload.Age)" />
+                </div>
+                <div class="col-6"></div>
+            </div>
+            <div class="form-group row">
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.DOB), typeof(InsuranceDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.DOB), typeof(InsuranceDetail))>
+                    <InputDate class="form-control" @bind-Value="payload.DOB" />
+                    <ValidationMessage For="@(() => payload.DOB)" />
+                </div>
+                <div class="col-6"></div>
+            </div>
+            <div class="form-group row">
+                <div class="col-1">
+                    <button class="btn btn-primary mb-2" type="submit">Next</button>
+                    <button class="btn btn-default mb-2" @onclick="BackToMainPage" type="button" @onclick:stopPropagation="true">Cancel</button>
+                </div>
+                <div class="col-10"></div>
+            </div>
+        </EditForm>
+    </div>
+}
+
+@code {
+
+    private InsuranceDetail payload;
+
+    protected async override Task OnInitializedAsync()
+    {
+        StateContainer.OnChange += StateHasChanged;
+
+        if (StateContainer.insuranceDetail != null)
+        {
+            payload = StateContainer.insuranceDetail;
+        }
+        else
+        {
+            payload = new InsuranceDetail()
+            {
+                Occupation = string.Empty,
+                State = string.Empty
+            };
+        }
+    }
+
+    private void BackToMainPage()
+    {
+        StateContainer.SetProperty(null);
+        NavManager.NavigateTo($"/");
+    }
+
+    private async Task SubmitValidFormAsync()
+    {
+        StateContainer.SetProperty(payload);
+        NavManager.NavigateTo($"screen2/");
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+}
