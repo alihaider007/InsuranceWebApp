@@ -2,6 +2,7 @@
 
 @inject NavigationManager NavManager
 @inject StateContainer StateContainer
+@inject IInsuranceService InsuranceService
 @implements IDisposable
 
 @using InsuranceWebApp.Data
@@ -13,75 +14,84 @@
 }
 else
 {
-    <h3>Insurance Detail - Final Step</h3>
+    <h3>Insurance Details - Final Step</h3>
     <hr />
     <div class="container">
-        <EditForm Model="payload">
+        <EditForm Model="payload.memberInsurance"  OnValidSubmit="Calculate">
             <FluentValidationValidator />
             <div class="form-group row">
-                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.Occupation), typeof(InsuranceDetail))</label>
-                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.Occupation), typeof(InsuranceDetail))>
-                    <InputSelect class="form-control" @bind-Value="payload.Occupation">
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.memberInsurance.Occupation), typeof(MemberInsurance))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.memberInsurance.Occupation), typeof(MemberInsurance))>
+                    <InputSelect class="form-control" @bind-Value="payload.memberInsurance.Occupation">
                         <option value="">--Select Option--</option>
                         @{
-                                foreach (var item in Helpers.GetKeyValuesAsListFromEnum(typeof(Constants.Occupation)).OrderBy(x => x.Key))
-                                {
+                            foreach (var item in Helpers.GetKeyValuesAsListFromEnum(typeof(Constants.Occupation)).OrderBy(x => x.Key))
+                            {
                                 <option value="@item.Key">@item.Value</option>
-                                }
+                            }
                         }
                     </InputSelect>
                 </div>
                 <div class="col-6"></div>
             </div>
             <div class="form-group row">
-                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.SumInsured), typeof(InsuranceDetail))</label>
-                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.SumInsured), typeof(InsuranceDetail))>
-                    <InputNumber class="form-control" @bind-Value="payload.SumInsured" />
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.memberInsurance.SumInsured), typeof(MemberInsurance))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.memberInsurance.SumInsured), typeof(MemberInsurance))>
+                    <InputNumber class="form-control" @bind-Value="payload.memberInsurance.SumInsured" />
+                    <ValidationMessage For="@(() => payload.memberInsurance.SumInsured)" />
                 </div>
                 <div class="col-6"></div>
             </div>
             <div class="form-group row">
-                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.MonthlyExpense), typeof(InsuranceDetail))</label>
-                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.MonthlyExpense), typeof(InsuranceDetail))>
-                    <InputNumber class="form-control" @bind-Value="payload.MonthlyExpense" />
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.memberInsurance.MonthlyExpense), typeof(MemberInsurance))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.memberInsurance.MonthlyExpense), typeof(MemberInsurance))>
+                    <InputNumber class="form-control" @bind-Value="payload.memberInsurance.MonthlyExpense" />
                 </div>
                 <div class="col-6"></div>
             </div>
             <div class="form-group row">
-                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.State), typeof(InsuranceDetail))</label>
-                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.State), typeof(InsuranceDetail))>
-                    <InputSelect class="form-control" @bind-Value="payload.State">
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.memberInsurance.State), typeof(MemberInsurance))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.memberInsurance.State), typeof(MemberInsurance))>
+                    <InputSelect class="form-control" @bind-Value="payload.memberInsurance.State">
                         <option value="">--Select Option--</option>
                         @{
-                                foreach (var item in Helpers.GetKeyValuesAsListFromEnum(typeof(Constants.State)).OrderBy(x => x.Key))
-                                {
+                            foreach (var item in Helpers.GetKeyValuesAsListFromEnum(typeof(Constants.State)).OrderBy(x => x.Key))
+                            {
                                 <option value="@item.Key">@item.Value</option>
-                                }
+                            }
                         }
                     </InputSelect>
                 </div>
                 <div class="col-6"></div>
             </div>
             <div class="form-group row">
-                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.PostCode), typeof(InsuranceDetail))</label>
-                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.PostCode), typeof(InsuranceDetail))>
-                    <InputNumber class="form-control" @bind-Value="payload.PostCode" />
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.memberInsurance.PostCode), typeof(MemberInsurance))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.memberInsurance.PostCode), typeof(MemberInsurance))>
+                    <InputNumber class="form-control" @bind-Value="payload.memberInsurance.PostCode" />
+                    <ValidationMessage For="@(() => payload.memberInsurance.PostCode)" />
                 </div>
                 <div class="col-6"></div>
             </div>
             <div class="form-group row">
-                <div class="col-1">
+                <div class="col-2"></div>
+                <button class="col-1 btn btn-info mb-2" type="submit">Calculate</button>
+                <div class="col-6">
+                    @if (@payload.memberInsurance.TotalValue > 0)
+                    {
+                        <label class="col-form-label control-label">$ @payload.memberInsurance.TotalValue</label>
+                    }
+                    else
+                    {
+                        <label class="col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.memberInsurance.TotalValue), typeof(MemberInsurance))</label>
+                    }
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="d-grid gap-2">
                     <button class="btn btn-primary mb-2" @onclick="BackToScreen1" type="button" @onclick:stopPropagation="true">Previous</button>
-                    <button class="btn btn-primary mb-2" @onclick="Calculate" type="button" @onclick:stopPropagation="true">Calculate</button>
+                    <button class="btn btn-primary mb-2" @onclick="BackToMainPage" type="button" @onclick:stopPropagation="true">Cancel</button>
                 </div>
-                <div class="col-10"></div>
-            </div>
-            <div class="form-group row">
-                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.TotalValue), typeof(InsuranceDetail))</label>
-                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.TotalValue), typeof(InsuranceDetail))>
-                    <InputNumber class="form-control" @bind-Value="payload.TotalValue" readonly />
-                </div>
-                <div class="col-6"></div>
+            <div class="col-10"></div>
             </div>
         </EditForm>
     </div>
@@ -99,17 +109,9 @@ else
         {
             payload = StateContainer.insuranceDetail;
         }
-        else
-        {
-            payload = new InsuranceDetail()
-            {
-                Occupation = string.Empty,
-                State = string.Empty
-            };
-        }
     }
 
-    private async void BackToScreen1()
+    private void BackToScreen1()
     {
         StateContainer.SetProperty(payload);
         NavManager.NavigateTo($"screen1/");
@@ -117,10 +119,16 @@ else
 
     private void Calculate()
     {
-        payload.TotalValue = (payload.SumInsured * 1) / (100 * 12 * payload.Age);
+        payload.memberInsurance.TotalValue = InsuranceService.CalculateInsurance(payload);
         StateContainer.SetProperty(payload);
         this.StateHasChanged();
         return;
+    }
+
+    private void BackToMainPage()
+    {
+        StateContainer.SetProperty(null);
+        NavManager.NavigateTo($"/");
     }
 
     public void Dispose()

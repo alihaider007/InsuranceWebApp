@@ -13,39 +13,39 @@
 }
 else
 {
-    <h3>Insurance Detail - Step 1</h3>
+    <h3>Member Details - Step 1</h3>
     <hr />
     <div class="container">
-        <EditForm Model="payload" OnValidSubmit="SubmitValidFormAsync">
+        <EditForm Model="payload.memberDetail" OnValidSubmit="SubmitValidFormAsync">
             <FluentValidationValidator />
             <div class="form-group row">
-                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.Name), typeof(InsuranceDetail))</label>
-                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.Name), typeof(InsuranceDetail))>
-                    <InputText class="form-control" @bind-Value="payload.Name" />
-                    <ValidationMessage For="@(() => payload.Name)" />
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.memberDetail.Name), typeof(MemberDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.memberDetail.Name), typeof(MemberDetail))>
+                    <InputText class="form-control" @bind-Value="payload.memberDetail.Name" />
+                    <ValidationMessage For="@(() => payload.memberDetail.Name)" />
                 </div>
                 <div class="col-6"></div>
             </div>
             <div class="form-group row">
-                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.Age), typeof(InsuranceDetail))</label>
-                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.Age), typeof(InsuranceDetail))>
-                    <InputNumber class="form-control" @bind-Value="payload.Age" />
-                    <ValidationMessage For="@(() => payload.Age)" />
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.memberDetail.Age), typeof(MemberDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.memberDetail.Age), typeof(MemberDetail))>
+                    <InputNumber class="form-control" @bind-Value="payload.memberDetail.Age" />
+                    <ValidationMessage For="@(() => payload.memberDetail.Age)" />
                 </div>
                 <div class="col-6"></div>
             </div>
             <div class="form-group row">
-                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.DOB), typeof(InsuranceDetail))</label>
-                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.DOB), typeof(InsuranceDetail))>
-                    <InputDate class="form-control" @bind-Value="payload.DOB" />
-                    <ValidationMessage For="@(() => payload.DOB)" />
+                <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.memberDetail.DOB), typeof(MemberDetail))</label>
+                <div class="col-3" title=@Helpers.GetDisplayDescription(nameof(payload.memberDetail.DOB), typeof(MemberDetail))>
+                    <InputDate class="form-control" @bind-Value="payload.memberDetail.DOB" />
+                    <ValidationMessage For="@(() => payload.memberDetail.DOB)" />
                 </div>
                 <div class="col-6"></div>
             </div>
             <div class="form-group row">
-                <div class="col-1">
+                <div class="d-grid gap-2">
                     <button class="btn btn-primary mb-2" type="submit">Next</button>
-                    <button class="btn btn-default mb-2" @onclick="BackToMainPage" type="button" @onclick:stopPropagation="true">Cancel</button>
+                    <button class="btn btn-primary mb-2" @onclick="BackToMainPage" type="button" @onclick:stopPropagation="true">Cancel</button>
                 </div>
                 <div class="col-10"></div>
             </div>
@@ -69,8 +69,8 @@ else
         {
             payload = new InsuranceDetail()
             {
-                Occupation = string.Empty,
-                State = string.Empty
+                memberDetail = new Data.MemberDetail(),
+                memberInsurance = new Data.MemberInsurance()
             };
         }
     }

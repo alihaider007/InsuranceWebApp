@@ -1,12 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace InsuranceWebApp.Data
 {
     public class InsuranceDetail
+    {
+        public MemberDetail memberDetail { get; set; }
+
+        public MemberInsurance memberInsurance { get; set; }
+    }
+
+    public class MemberDetail
     {
         [Display(Name = "Name", Description = "Member's Name")]
         public string Name { get; set; }
@@ -16,12 +20,14 @@ namespace InsuranceWebApp.Data
 
         [Display(Name = "Date of Birth", Description = "Member's Date of Birth")]
         public DateTime DOB { get; set; }
+    }
 
+    public class MemberInsurance
+    {
         [Display(Name = "Occupation", Description = "Member's Occupation")]
         public string Occupation { get; set; }
 
         [Display(Name = "Sum Insured", Description = "Sum Insured Amount")]
-        [Range(typeof(double), "1000", "1000000")]
         public double SumInsured { get; set; }
 
         [Display(Name = "Monthly Expenses Total", Description = "Member's Monthly Expenses Total")]
@@ -31,7 +37,6 @@ namespace InsuranceWebApp.Data
         public string State { get; set; }
 
         [Display(Name = "Post Code", Description = "Post Code")]
-        [MinLength(4, ErrorMessage = "Post Code cannot be less than 4 digits"), MaxLength(4, ErrorMessage = "Post Code cannot be more than 4 digits")]
         public int PostCode { get; set; }
 
         [Display(Name = "Total Value", Description = "Total Value")]

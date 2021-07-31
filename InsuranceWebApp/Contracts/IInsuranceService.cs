@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using InsuranceWebApp.Data;
 
 namespace InsuranceWebApp.Contracts
 {
     public interface IInsuranceService
     {
-        Task CalculateInsurance();
+        double CalculateInsurance(InsuranceDetail insuranceDetail);
     }
 }
