@@ -1,4 +1,4 @@
-﻿@page "/screen2"
+﻿@page "/insurnace/screen2"
 
 @inject NavigationManager NavManager
 @inject ProtectedSessionStorage session
@@ -126,7 +126,7 @@ else
     private async void BackToScreen1()
     {
         await session.SetAsync("insuranceDetails", payload);
-        NavManager.NavigateTo($"screen1/");
+        NavManager.NavigateTo($"/insurnace/screen1/");
     }
 
     private async void Calculate()

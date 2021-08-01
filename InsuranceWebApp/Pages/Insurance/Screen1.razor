@@ -1,4 +1,4 @@
-﻿@page "/screen1"
+﻿@page "/insurnace/screen1"
 
 @inject NavigationManager NavManager
 @inject ProtectedSessionStorage session 
@@ -96,6 +96,6 @@ else
     private async Task SubmitValidFormAsync()
     {
         await session.SetAsync("insuranceDetails", payload);
-        NavManager.NavigateTo($"screen2/");
+        NavManager.NavigateTo($"/insurnace/screen2/");
     }
 }
