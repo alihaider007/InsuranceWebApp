@@ -1,8 +1,7 @@
 ﻿@page "/screen1"
 
 @inject NavigationManager NavManager
-@inject StateContainer StateContainer
-@implements IDisposable
+@inject ProtectedSessionStorage session 
 
 @using InsuranceWebApp.Data
 @using Blazored.FluentValidation
@@ -57,38 +56,46 @@ else
 
     private InsuranceDetail payload;
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        StateContainer.OnChange += StateHasChanged;
+        payload = new InsuranceDetail()
+        {
+            memberDetail = new Data.MemberDetail(),
+            memberInsurance = new Data.MemberInsurance()
+        };
+    }
 
-        if (StateContainer.insuranceDetail != null)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
         {
-            payload = StateContainer.insuranceDetail;
-        }
-        else
-        {
-            payload = new InsuranceDetail()
+            var result = await session.GetAsync<InsuranceDetail>("insuranceDetails");
+
+            if (result.Success)
             {
-                memberDetail = new Data.MemberDetail(),
-                memberInsurance = new Data.MemberInsurance()
-            };
+                payload = result.Value;
+            }
+            else
+            {
+                payload = new InsuranceDetail()
+                {
+                    memberDetail = new Data.MemberDetail(),
+                    memberInsurance = new Data.MemberInsurance()
+                };
+            }
+            this.StateHasChanged();
         }
     }
 
-    private void BackToMainPage()
+    private async void BackToMainPage()
     {
-        StateContainer.SetProperty(null);
+        await session.DeleteAsync("insuranceDetails");
         NavManager.NavigateTo($"/");
     }
 
     private async Task SubmitValidFormAsync()
     {
-        StateContainer.SetProperty(payload);
+        await session.SetAsync("insuranceDetails", payload);
         NavManager.NavigateTo($"screen2/");
-    }
-
-    public void Dispose()
-    {
-        StateContainer.OnChange -= StateHasChanged;
     }
 }

@@ -1,9 +1,8 @@
 ﻿@page "/screen2"
 
 @inject NavigationManager NavManager
-@inject StateContainer StateContainer
+@inject ProtectedSessionStorage session
 @inject IInsuranceService InsuranceService
-@implements IDisposable
 
 @using InsuranceWebApp.Data
 @using Blazored.FluentValidation
@@ -17,7 +16,7 @@ else
     <h3>Insurance Details - Final Step</h3>
     <hr />
     <div class="container">
-        <EditForm Model="payload.memberInsurance"  OnValidSubmit="Calculate">
+        <EditForm Model="payload.memberInsurance" OnValidSubmit="Calculate">
             <FluentValidationValidator />
             <div class="form-group row">
                 <label class="col-3 col-form-label control-label">@Helpers.GetDisplayName(nameof(payload.memberInsurance.Occupation), typeof(MemberInsurance))</label>
@@ -25,10 +24,10 @@ else
                     <InputSelect class="form-control" @bind-Value="payload.memberInsurance.Occupation">
                         <option value="">--Select Option--</option>
                         @{
-                            foreach (var item in Helpers.GetKeyValuesAsListFromEnum(typeof(Constants.Occupation)).OrderBy(x => x.Key))
-                            {
+                                foreach (var item in Helpers.GetKeyValuesAsListFromEnum(typeof(Constants.Occupation)).OrderBy(x => x.Key))
+                                {
                                 <option value="@item.Key">@item.Value</option>
-                            }
+                                }
                         }
                     </InputSelect>
                 </div>
@@ -55,10 +54,10 @@ else
                     <InputSelect class="form-control" @bind-Value="payload.memberInsurance.State">
                         <option value="">--Select Option--</option>
                         @{
-                            foreach (var item in Helpers.GetKeyValuesAsListFromEnum(typeof(Constants.State)).OrderBy(x => x.Key))
-                            {
+                                foreach (var item in Helpers.GetKeyValuesAsListFromEnum(typeof(Constants.State)).OrderBy(x => x.Key))
+                                {
                                 <option value="@item.Key">@item.Value</option>
-                            }
+                                }
                         }
                     </InputSelect>
                 </div>
@@ -89,9 +88,9 @@ else
             <div class="form-group row">
                 <div class="d-grid gap-2">
                     <button class="btn btn-primary mb-2" @onclick="BackToScreen1" type="button" @onclick:stopPropagation="true">Previous</button>
-                    <button class="btn btn-primary mb-2" @onclick="BackToMainPage" type="button" @onclick:stopPropagation="true">Cancel</button>
+                    <button class="btn btn-primary mb-2" @onclick="BackToMainPage" type="button" @onclick:stopPropagation="true">Close</button>
                 </div>
-            <div class="col-10"></div>
+                <div class="col-10"></div>
             </div>
         </EditForm>
     </div>
@@ -101,38 +100,46 @@ else
 
     private InsuranceDetail payload;
 
-    protected async override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        StateContainer.OnChange += StateHasChanged;
-
-        if (StateContainer.insuranceDetail != null)
+        payload = new InsuranceDetail()
         {
-            payload = StateContainer.insuranceDetail;
+            memberDetail = new Data.MemberDetail(),
+            memberInsurance = new Data.MemberInsurance()
+        };
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var result = await session.GetAsync<InsuranceDetail>("insuranceDetails");
+
+            if (result.Success)
+            {
+                payload = result.Value;
+            }
+            this.StateHasChanged();
         }
     }
 
-    private void BackToScreen1()
+    private async void BackToScreen1()
     {
-        StateContainer.SetProperty(payload);
+        await session.SetAsync("insuranceDetails", payload);
         NavManager.NavigateTo($"screen1/");
     }
 
-    private void Calculate()
+    private async void Calculate()
     {
         payload.memberInsurance.TotalValue = InsuranceService.CalculateInsurance(payload);
-        StateContainer.SetProperty(payload);
+        await session.SetAsync("insuranceDetails", payload);
         this.StateHasChanged();
         return;
     }
 
-    private void BackToMainPage()
+    private async void BackToMainPage()
     {
-        StateContainer.SetProperty(null);
+        await session.DeleteAsync("insuranceDetails");
         NavManager.NavigateTo($"/");
-    }
-
-    public void Dispose()
-    {
-        StateContainer.OnChange -= StateHasChanged;
     }
 }

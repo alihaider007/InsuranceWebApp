@@ -24,7 +24,6 @@ namespace InsuranceWebApp
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<StateContainer>();
             services.AddSingleton<IInsuranceService, InsuranceService>();
         }
 
