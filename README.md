@@ -12,11 +12,12 @@ Insurnace Calculator web application project is created using Blazor app in .Net
 - Fluent Validation library is used to perform validations on screens.
 - The information is only retained within the process of calculation.  Once new calculation is started then the previous calculation details will be vanished.
 - Bootstrap is used for styling.
+- Protected Session Storage is used to store session data
 ## Run Locally
 
 Clone the project
 
-```bash
+```powershell
   git clone https://github.com/alihaider007/InsuranceWebApp.git
 ```
 
