@@ -102,22 +102,28 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        payload = new InsuranceDetail()
-        {
-            memberDetail = new Data.MemberDetail(),
-            memberInsurance = new Data.MemberInsurance()
-        };
+
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var result = await session.GetAsync<InsuranceDetail>("insuranceDetails");
-
-            if (result.Success)
+            try
             {
-                payload = result.Value;
+                var result = await session.GetAsync<InsuranceDetail>("insuranceDetails");
+
+                if (result.Success)
+                {
+                    payload = result.Value;
+                }
+                else
+                {
+                    NavManager.NavigateTo($"/insurnace/screen1/");
+                }
+            }
+            catch {
+                NavManager.NavigateTo($"/insurnace/screen1/");
             }
             this.StateHasChanged();
         }

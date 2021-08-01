@@ -69,19 +69,35 @@ else
     {
         if (firstRender)
         {
-            var result = await session.GetAsync<InsuranceDetail>("insuranceDetails");
+            try
+            {
+                var result = await session.GetAsync<InsuranceDetail>("insuranceDetails");
 
-            if (result.Success)
-            {
-                payload = result.Value;
-            }
-            else
-            {
-                payload = new InsuranceDetail()
+                if (result.Success)
                 {
-                    memberDetail = new Data.MemberDetail(),
-                    memberInsurance = new Data.MemberInsurance()
-                };
+                    payload = result.Value;
+                }
+                else
+                {
+                    if (payload is null)
+                    {
+                        payload = new InsuranceDetail()
+                        {
+                            memberDetail = new Data.MemberDetail(),
+                            memberInsurance = new Data.MemberInsurance()
+                        };
+                    }
+                }
+            }
+            catch {
+                if (payload is null)
+                {
+                    payload = new InsuranceDetail()
+                    {
+                        memberDetail = new Data.MemberDetail(),
+                        memberInsurance = new Data.MemberInsurance()
+                    };
+                }
             }
             this.StateHasChanged();
         }
